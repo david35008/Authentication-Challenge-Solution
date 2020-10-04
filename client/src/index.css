@@ -1,0 +1,53 @@
+.Home {
+text-align: center;
+display: flex;
+flex-direction: column;
+max-width: 900px;
+margin: auto;
+}
+
+.title{
+    font-size: 50px;
+}
+
+.logOut {
+    margin: 10px;
+}
+
+.usersInfo {
+    display: flex;
+    border: 1px solid black;
+    justify-content: space-between;
+    max-width: 200px;
+    margin: auto;
+    font-size: 15px;
+}
+
+.tableContainer{
+     display: flex;
+     border: 1px solid black;
+     justify-content: space-between;
+     max-width: 900px;
+     margin: auto;
+     font-size: 15px;
+}
+
+.userEmail {
+    border: 1px solid black;
+    width: 150px;
+}
+.userName {
+    border: 1px solid black;
+    width: 150px;
+}
+
+.userIsAdmin {
+    border: 1px solid black;
+    width: 70px;
+}
+
+.userPassword {
+    border: 1px solid black;
+    width: 500px;
+
+}
