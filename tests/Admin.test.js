@@ -20,56 +20,58 @@ describe('Admin Tests', () => {
     })
     test('Only Admin Can Get Users List', async (done) => {
 
-        const { body: adminLoginRes } = await request(server)
+        const adminLoginRes = await request(server)
             .post('/users/login')
             .send(userAdminMock)
-            .expect(200)
 
-        expect(adminLoginRes.isAdmin).toBe(true)
-        expect(typeof adminLoginRes.accessToken).toBe('string')
-        expect(adminLoginRes.accessToken.length > 100).toBe(true)
+        expect(adminLoginRes.status).toBe(200)
+        expect(adminLoginRes.body.isAdmin).toBe(true)
+        expect(typeof adminLoginRes.body.accessToken).toBe('string')
+        expect(adminLoginRes.body.accessToken.length > 100).toBe(true)
 
-        const { body: infoRes } = await request(server)
+        const infoRes = await request(server)
             .get('/api/v1/information')
-            .set('authorization', `bearer ${adminLoginRes.accessToken}`)
-            .expect(200)
+            .set('authorization', `bearer ${adminLoginRes.body.accessToken}`)
 
-        expect(infoRes.length > 0).toBe(true)
+        expect(infoRes.status).toBe(200)
+        expect(infoRes.body.length > 0).toBe(true)
 
-        const { body: getAllUsersRes } = await request(server)
+        const getAllUsersRes = await request(server)
             .get('/api/v1/users')
-            .set('authorization', `Bearer ${adminLoginRes.accessToken}`)
-            .expect(200)
+            .set('authorization', `Bearer ${adminLoginRes.body.accessToken}`)
 
-        expect(getAllUsersRes[0].email).toBe(userAdminMock.email)
-        expect(getAllUsersRes.length > 0).toBe(true)
+        expect(getAllUsersRes.status).toBe(200)
+        expect(getAllUsersRes.body[0].email).toBe(userAdminMock.email)
+        expect(getAllUsersRes.body.length > 0).toBe(true)
 
-        const { body: getAllUsersNoAdminRes } = await request(server)
+        const getAllUsersNoAdminRes = await request(server)
             .get('/api/v1/users')
             .set('authorization', `Bearer token`)
-            .expect(403)
 
-        expect(getAllUsersNoAdminRes.length > 0).toBe(false)
+        expect(getAllUsersNoAdminRes.status).toBe(403)
+        expect(getAllUsersNoAdminRes.body.length > 0).toBe(false)
         done();
     })
 
     test('Passwords must be stored with hash', async (done) => {
-        await request(server)
+        const registerResponse = await request(server)
             .post('/users/register')
             .send(userRegisterMock)
-            .expect(201);
 
-        const { body: adminLoginRes } = await request(server)
+        expect(registerResponse.status).toBe(201)
+
+        const adminLoginRes = await request(server)
             .post('/users/login')
             .send(userAdminMock)
-            .expect(200)
 
-        const { body: infoRes } = await request(server)
+        expect(adminLoginRes.status).toBe(200)
+
+        const infoRes = await request(server)
             .get('/api/v1/users')
-            .set('authorization', `bearer ${adminLoginRes.accessToken}`)
-            .expect(200)
+            .set('authorization', `bearer ${adminLoginRes.body.accessToken}`)
 
-        const userMock = infoRes.filter(user => user.name === userRegisterMock.name)[0]
+        expect(infoRes.status).toBe(200)
+        const userMock = infoRes.body.filter(user => user.name === userRegisterMock.name)[0]
 
         expect(userMock.password === userRegisterMock.password).toBe(false)
         expect(userMock.password.length).toBe(60)

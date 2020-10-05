@@ -13,56 +13,61 @@ describe('Token expiration and refresh test', () => {
     })
     test('Access Token expires after 30s and can be renewed with refresh token', async (done) => {
 
-        await request(server)
+        const registerResponse = await request(server)
             .post('/users/register')
             .send(userMock)
-            .expect(201);
 
-        const { body: loginRes } = await request(server)
+
+        expect(registerResponse.status).toBe(201)
+
+        const loginRes = await request(server)
             .post('/users/login')
             .send(userMock)
-            .expect(200)
 
-        expect(loginRes.accessToken.length > 100).toBe(true)
-        expect(typeof loginRes.accessToken).toBe('string')
+        expect(loginRes.status).toBe(200)
+        expect(loginRes.body.accessToken.length > 100).toBe(true)
+        expect(typeof loginRes.body.accessToken).toBe('string')
 
-        const { body: infoRes } = await request(server)
+        const infoRes = await request(server)
             .get('/api/v1/information')
-            .set('authorization', `bearer ${loginRes.accessToken}`)
-            .expect(200)
+            .set('authorization', `bearer ${loginRes.body.accessToken}`)
 
-        expect(infoRes.length > 0).toBe(true)
-        await timeout(30500)
+        expect(infoRes.status).toBe(200)
+        expect(infoRes.body.length > 0).toBe(true)
+        await timeout(10500)
 
-        await request(server)
+        const serverResponse = await request(server)
             .get('/api/v1/information')
-            .set('authorization', `bearer ${loginRes.accessToken}`)
-            .expect(403)
+            .set('authorization', `bearer ${loginRes.body.accessToken}`)
 
-        await request(server)
+        expect(serverResponse.status).toBe(403)
+
+        const serverResponse1 = await request(server)
             .post('/users/token')
             .send({ blabla: 'no token' })
-            .expect(401)
 
-        await request(server)
+        expect(serverResponse1.status).toBe(401)
+
+        const serverResponse2 = await request(server)
             .post('/users/token')
             .send({ token: 'not valid token' })
-            .expect(403)
 
-        const { body: data } = await request(server)
+        expect(serverResponse2.status).toBe(403)
+
+        const data = await request(server)
             .post('/users/token')
-            .send({ token: loginRes.refreshToken })
-            .expect(200)
+            .send({ token: loginRes.body.refreshToken })
 
-        expect(data.accessToken.length > 100).toBe(true)
-        expect(typeof data.accessToken).toBe('string')
+        expect(data.status).toBe(200)
+        expect(data.body.accessToken.length > 100).toBe(true)
+        expect(typeof data.body.accessToken).toBe('string')
 
-        const { body: infoRes2 } = await request(server)
+        const infoRes2 = await request(server)
             .get('/api/v1/information')
-            .set('authorization', `bearer ${data.accessToken}`)
-            .expect(200)
+            .set('authorization', `bearer ${data.body.accessToken}`)
 
-        expect(infoRes2.length > 0).toBe(true)
+        expect(infoRes2.status).toBe(200)
+        expect(infoRes2.body.length > 0).toBe(true)
         done();
     }, 35000)
 }, 35000)

@@ -27,50 +27,52 @@ describe('Register & Login Tests', () => {
 
     // user register
     test('User Can Register', async (done) => {
-        const { body: response } = await request(server)
+        const registerResponse = await request(server)
             .post('/users/register')
             .send(userRegisterMock)
-            .expect(201);
 
-        expect(response.message).toBe("Register Success")
+        expect(registerResponse.status).toBe(201)
         done();
     })
 
     // user login
     test('User Can Login', async (done) => {
-        await request(server)
+        const registerResponse = await request(server)
             .post('/users/register')
             .send(userLoginMock)
-            .expect(201);
 
-        const response = await request(server)
+        expect(registerResponse.status).toBe(201)
+
+        const loginResponse = await request(server)
             .post('/users/login')
             .send(userLoginMock)
-            .expect(200)
 
-        expect(response.body.accessToken.length > 0).toBe(true)
-        expect(response.body.refreshToken.length > 0).toBe(true)
-        expect(response.body.userName).toBe(userLoginMock.name)
+        expect(loginResponse.status).toBe(200)
+        expect(loginResponse.body.accessToken.length > 0).toBe(true)
+        expect(loginResponse.body.refreshToken.length > 0).toBe(true)
+        expect(loginResponse.body.userName).toBe(userLoginMock.name)
         done();
     })
 
     // user logout
     test('User Can Logout', async (done) => {
-        await request(server)
+        const registerResponse = await request(server)
             .post('/users/register')
             .send(userLogoutMock)
-            .expect(201);
 
-        const response = await request(server)
+        expect(registerResponse.status).toBe(201)
+
+        const loginResponse = await request(server)
             .post('/users/login')
             .send(userLogoutMock)
-            .expect(200)
 
-        const { body: responseOut } = await request(server)
+        expect(loginResponse.status).toBe(200)
+
+        const logOutResponse = await request(server)
             .post('/users/logout')
-            .send({ token: response.body.refreshToken })
-            .expect(200)
-        expect(responseOut.message).toBe("User Logged Out Successfully")
+            .send({ token: loginResponse.body.refreshToken })
+
+        expect(logOutResponse.status).toBe(200)
         done();
     })
 
