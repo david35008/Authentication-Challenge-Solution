@@ -22,7 +22,7 @@ function Home() {
                     console.log("refreshed the acces token");
                 })
                 .catch(err => console.error(err));
-        }, 14000);
+        }, 9000);
 
         return () => clearInterval(interval);
     })
