@@ -11,7 +11,7 @@ describe('Token expiration and refresh test', () => {
     afterAll(async () => {
         server.close()
     })
-    test('Access Token expires after 30s and can be renewed with refresh token', async (done) => {
+    test('Access Token expires after 10s and can be renewed with refresh token', async (done) => {
 
         const registerResponse = await request(server)
             .post('/users/register')

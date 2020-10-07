@@ -34,7 +34,7 @@ describe('Authorized User Tests', () => {
 
         expect(infoRes.status).toBe(200)
         expect(infoRes.body.length > 0).toBe(true)
-        expect(infoRes.body[0].name).toBe(userInfoMock.name)
+        expect(infoRes.body[0].email).toBe(userInfoMock.email)
 
         const informationResponse = await request(server)
             .get('/api/v1/information')

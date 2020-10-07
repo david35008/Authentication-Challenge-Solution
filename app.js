@@ -20,7 +20,7 @@ const USERS = [
 ];
 
 const INFORMATION = [
-  { name: "admin", info: 'admin info' }
+  { email: "admin@email.com", info: 'admin info' }
 ];
 
 let REFRESH_TOKENS = [];
@@ -63,7 +63,7 @@ app.post('/users/register', async (req, res) => {
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
   const user = { name: req.body.name, email: req.body.email, password: hashedPassword, isAdmin: false };
   USERS.push(user);
-  INFORMATION.push({ name: req.body.name, info: `${req.body.name} info` });
+  INFORMATION.push({ email: req.body.email, info: `${req.body.name} info` });
   res.status(201).json({ message: "Register Success" });
 });
 
@@ -76,7 +76,7 @@ app.post('/users/login', async (req, res) => {
     const accessToken = generateAccessToken(user);
     const refreshToken = jwt.sign(user, "my refresh token secret key");
     REFRESH_TOKENS.push(refreshToken);
-    res.json({ accessToken, refreshToken, userName: user.name, isAdmin: user.isAdmin });
+    res.json({ accessToken, refreshToken, email: user.email, name: user.name, isAdmin: user.isAdmin });
   } else {
     res.status(403).json({ message: 'User or Password incorrect' });
   };
@@ -134,7 +134,7 @@ app.post('/users/logout', (req, res) => {
 // Get DB info (admin permissions are not required)
 app.get('/api/v1/information', checkToken, (req, res) => {
   if (req.decoded.isAdmin) res.json(INFORMATION);
-  const userInfo = INFORMATION.filter(info => info.name === req.decoded.name);
+  const userInfo = INFORMATION.filter(info => info.email === req.decoded.email);
   if (userInfo) {
     res.json(userInfo);
   }

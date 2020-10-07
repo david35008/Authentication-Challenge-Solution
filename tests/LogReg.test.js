@@ -50,7 +50,7 @@ describe('Register & Login Tests', () => {
         expect(loginResponse.status).toBe(200)
         expect(loginResponse.body.accessToken.length > 0).toBe(true)
         expect(loginResponse.body.refreshToken.length > 0).toBe(true)
-        expect(loginResponse.body.userName).toBe(userLoginMock.name)
+        expect(loginResponse.body.name).toBe(userLoginMock.name)
         done();
     })
 

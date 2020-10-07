@@ -71,7 +71,7 @@ describe('Admin Tests', () => {
             .set('authorization', `bearer ${adminLoginRes.body.accessToken}`)
 
         expect(infoRes.status).toBe(200)
-        const userMock = infoRes.body.filter(user => user.name === userRegisterMock.name)[0]
+        const userMock = infoRes.body.filter(user => user.email === userRegisterMock.email)[0]
 
         expect(userMock.password === userRegisterMock.password).toBe(false)
         expect(userMock.password.length).toBe(60)
